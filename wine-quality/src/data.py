@@ -40,6 +40,22 @@ def quality_band(q: pd.Series) -> pd.Series:
     return pd.cut(q, [2, 4, 6, 9], labels=["low (<=4)", "mid (5-6)", "high (>=7)"])
 
 
+# Features that are strongly right-skewed (candidates for a log1p transform).
+SKEWED = ["chlorides", "residual_sugar", "sulphates", "free_sulfur_dioxide", "fixed_acidity"]
+ENGINEERED = ["bound_so2", "so2_ratio", "total_acidity", "alcohol_density"]
+
+
+def engineer(df: pd.DataFrame) -> pd.DataFrame:
+    """Add chemically-meaningful derived features (Part 3). `alcohol_density` (alcohol ÷ density)
+    is the single best quality correlate — better than alcohol alone."""
+    d = df.copy()
+    d["bound_so2"] = d.total_sulfur_dioxide - d.free_sulfur_dioxide          # the bound SO2 fraction
+    d["so2_ratio"] = d.free_sulfur_dioxide / (d.total_sulfur_dioxide + 1)    # free share of total SO2
+    d["total_acidity"] = d.fixed_acidity + d.volatile_acidity + d.citric_acid
+    d["alcohol_density"] = d.alcohol / d.density
+    return d
+
+
 def features_target(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
     return df[NUMERIC + ["wine_type"]], df["quality"]
 

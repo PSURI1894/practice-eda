@@ -34,7 +34,7 @@ Open the notebooks with the **Python (wine-quality)** kernel, or run headless wi
 - [x] **Part 1** — Advanced EDA: imbalance + red/white split, univariate sweep of all 11 features,
   **quality drivers** (Spearman), **multicollinearity (VIF)**, red-vs-white chemistry, the good-wine picture
 - [x] **Part 2** — Multivariate structure: PCA (PC1=red/white axis, 27%), t-SNE, quality is nonlinear (lives on PC2, weakly)
-- [ ] Part 3 — Imbalanced ordinal **classification** (baselines, LightGBM, macro-F1, confusion matrix)
+- [x] **Part 3** — Feature engineering: log transforms, outliers, engineered chemistry (alcohol/density +0.48 beats all)
 - [ ] Part 4+ — calibration, feature importance / SHAP, cost-sensitive thresholds
 
 ## Headline findings so far
