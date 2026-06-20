@@ -1,0 +1,14 @@
+# Beijing air-quality practice — EDA + missing-data + forecasting stack (Python 3.12).
+pandas>=2.2,<3
+numpy>=1.26,<2.2
+scipy>=1.13
+matplotlib>=3.8
+seaborn>=0.13
+statsmodels>=0.14
+scikit-learn>=1.4       # KNNImputer + IterativeImputer (MICE) for missing-data work
+lightgbm>=4.5           # gradient-boosted trees for pollution forecasting
+
+# Notebook tooling
+jupyter
+ipykernel
+nbconvert
