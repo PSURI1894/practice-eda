@@ -65,6 +65,16 @@ def missing_hours(df: pd.DataFrame) -> int:
     return len(full.difference(df.index))
 
 
+def hourly_cnt() -> pd.Series:
+    """`cnt` on a GAPLESS hourly grid (the 165 absent slots time-interpolated), freq='h'.
+    Time-series models assume a regular index — this supplies it."""
+    s = clean()["cnt"]
+    full = pd.date_range(s.index.min(), s.index.max(), freq="h")
+    out = s.reindex(full).interpolate("time")
+    out.index.freq = "h"
+    return out
+
+
 def build_processed() -> pd.DataFrame:
     clean_df = clean()
     clean_df.to_csv(DATA_PROC / "bike_clean.csv")

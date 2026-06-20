@@ -36,7 +36,8 @@ Open the notebooks with the **Python (bike-sharing)** kernel, or run headless:
   categoricals, de-normalized weather (real °C/%/km·h⁻¹), datetime index
 - [x] **Part 1** — Advanced EDA: count-target distribution + √ transform, demand rhythms
   (commute vs leisure profiles), weather drivers, temp/atemp collinearity, Cramér's V, outliers
-- [ ] Part 2 — TS foundations (multi-seasonal decomposition, stationarity, ACF/PACF)
+- [x] **Part 2** — TS foundations: hourly index hygiene (gap interpolation), **MSTL** multi-seasonal
+  decomposition (daily/weekly), stationarity (ADF×KPSS), ACF/PACF, seasonal differencing
 - [ ] Part 3 — Forecasting with covariates (SARIMAX / ETS / LightGBM with weather + calendar)
 - [ ] Part 4+ — evaluation & extensions
 
@@ -48,3 +49,4 @@ Open the notebooks with the **Python (bike-sharing)** kernel, or run headless:
 - **Strong trend:** rentals grew **+63%** from 2011 to 2012; plus clear seasonal + weather effects.
 - **Multicollinearity:** `temp` and `atemp` are near-duplicates (VIF ≈ 44) — keep one.
 - **Index hygiene:** no missing *values*, but **165 hourly slots are absent** from the 2-year grid.
+- **Multi-seasonal:** demand has daily (period 24) and weekly (168) cycles — ACF spikes at lag 24 (0.82) and 168 (0.87); **MSTL** ranks the drivers daily (swing 851) > weekly (688) > trend (277). Deseasonalizing leaves a **stationary** residual (its ACF spikes collapse to ≈0).
