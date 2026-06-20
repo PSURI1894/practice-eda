@@ -10,6 +10,11 @@ PJM hourly demand in **megawatts**, 2002–2018, 11 regional zones (via the `pan
 Consumption` mirror of the PJM/Kaggle data). Primary series = **PJME** (PJM East, ~145k hourly rows,
 the longest gap-free zone); the other zones form a multivariate panel.
 
+> **New to this?** Start with the **beginner-friendly in-depth docs**:
+> [`docs/DEEP_DIVE.md`](docs/DEEP_DIVE.md) defines every concept (plain definition + example + why
+> it's relevant) and maps each notebook; [`docs/CODE_WALKTHROUGH.md`](docs/CODE_WALKTHROUGH.md)
+> justifies every `src/` function line by line.
+
 ## Layout
 ```
 data/raw/  data/processed/   assembled panel + cleaned series

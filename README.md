@@ -12,6 +12,7 @@ findings) so a new practice never collides with an old one.
 | [`bike-sharing/`](bike-sharing/) | UCI Bike-Sharing hourly demand (2011–12) | Complete study (Parts 0–6): Advanced EDA → multi-seasonal TS → covariate forecasting → walk-forward backtesting & probabilistic intervals → SHAP interpretability → weather-forecast uncertainty propagation |
 | [`beijing-air-quality/`](beijing-air-quality/) | UCI Beijing PM2.5 hourly (2010–14) | **Extensive** air-quality EDA (quality, distributions, missingness, temporal/meteorology/extremes/PCA) + **evaluated imputation** + pollution forecasting with extreme/probabilistic warnings (Parts 0–6) |
 | [`wine-quality/`](wine-quality/) | UCI Wine Quality (red+white, 6,497 wines) | Complete study (Parts 0–10): first **cross-sectional** practice — advanced EDA → PCA/t-SNE → feature engineering → modeling framework (leakage, **QWK**) → classification → ordinal framing → class imbalance (SMOTE) → calibration → SHAP interpretability → red/white capstone |
+| [`energy-demand/`](energy-demand/) | PJM hourly electricity demand (2002–18, 11 zones) | **The TS-heavy one** (Parts 0–11): advanced EDA (triple/bimodal seasonality, ramps) → stationarity & **MSTL** → spectral (FFT/Hurst) → multivariate **PCA common factor** → anomaly/change-points → forecasting (MSTL-AutoARIMA, **LightGBM** day-ahead) → **CQR** intervals & walk-forward backtest → load-shape clustering |
 
 _New practice → new sibling folder._
 
