@@ -75,6 +75,25 @@ def hourly_cnt() -> pd.Series:
     return out
 
 
+def regular_grid() -> pd.DataFrame:
+    """Full hourly grid for forecasting: `cnt` + weather time-interpolated across the 165 gaps,
+    and the calendar columns rebuilt *exactly* from the datetime index (`hr`,`dow`,`mnth`,`yr`).
+    The slowly-varying flags (`workingday`,`holiday`,`season`,`weathersit`) are gap-filled."""
+    df = clean()
+    full = pd.date_range(df.index.min(), df.index.max(), freq="h")
+    g = df.reindex(full)
+    for c in ["cnt", "casual", "registered", "temp_C", "atemp_C", "hum_pct", "wind_kmh"]:
+        g[c] = g[c].interpolate("time")
+    g["hr"] = g.index.hour
+    g["dow"] = g.index.dayofweek          # 0=Mon..6=Sun (consistent regardless of source coding)
+    g["mnth"] = g.index.month
+    g["yr"] = g.index.year - 2011         # 0 = 2011, 1 = 2012
+    for c in ["workingday", "holiday", "season", "weathersit"]:
+        g[c] = g[c].astype("float").ffill().bfill()
+    g.index.freq = "h"
+    return g
+
+
 def build_processed() -> pd.DataFrame:
     clean_df = clean()
     clean_df.to_csv(DATA_PROC / "bike_clean.csv")
