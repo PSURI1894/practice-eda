@@ -11,7 +11,7 @@ findings) so a new practice never collides with an old one.
 | [`sp500-shiller/`](sp500-shiller/) | S&P 500 (Shiller, 1871→), Telco Churn, Mauna Loa CO₂, 12-stock panel | Full course: Advanced EDA → TS foundations → forecasting → multivariate → ML/DL → evaluation, plus GARCH/DCC volatility stretches (Parts 0–10) |
 | [`bike-sharing/`](bike-sharing/) | UCI Bike-Sharing hourly demand (2011–12) | Complete study (Parts 0–6): Advanced EDA → multi-seasonal TS → covariate forecasting → walk-forward backtesting & probabilistic intervals → SHAP interpretability → weather-forecast uncertainty propagation |
 | [`beijing-air-quality/`](beijing-air-quality/) | UCI Beijing PM2.5 hourly (2010–14) | **Extensive** air-quality EDA (quality, distributions, missingness, temporal/meteorology/extremes/PCA) + **evaluated imputation** + pollution forecasting with extreme/probabilistic warnings (Parts 0–6) |
-| [`wine-quality/`](wine-quality/) | UCI Wine Quality (red+white, 6,497 wines) | First **cross-sectional** practice: imbalanced **ordinal classification** — duplicate/leakage handling, multicollinearity (VIF), red-vs-white chemistry; PCA + classification + calibration to come (Parts 0–1; in progress) |
+| [`wine-quality/`](wine-quality/) | UCI Wine Quality (red+white, 6,497 wines) | Complete study (Parts 0–10): first **cross-sectional** practice — advanced EDA → PCA/t-SNE → feature engineering → modeling framework (leakage, **QWK**) → classification → ordinal framing → class imbalance (SMOTE) → calibration → SHAP interpretability → red/white capstone |
 
 _New practice → new sibling folder._
 

@@ -2,19 +2,25 @@
 
 The fourth practice in the `practice-eda` collection, and the first **cross-sectional** one (no time
 axis) — chosen to exercise the toolkit the three time-series practices never needed: imbalanced
-**multi-class / ordinal classification**, multicollinearity, and (coming) calibration, fairness-style
-per-class analysis, and k-fold cross-validation.
+**multi-class / ordinal classification**, multicollinearity, probability calibration, SHAP
+interpretability, and k-fold cross-validation. **Complete study, Parts 0–10.**
 
 ## Dataset (`data/raw/wine.csv`)
 UCI **Wine Quality** (red + white combined, via the `zygmuntz/wine-quality` mirror): **6,497 wines ×
 13 cols**. Target = **`quality`** (ordinal taster score 3–9). Eleven physicochemical features
 (acidity, sugar, chlorides, sulfur dioxide, density, pH, sulphates, alcohol) + a `wine_type` flag.
 
+> **New to this?** Start with the **beginner-friendly in-depth docs**:
+> [`docs/DEEP_DIVE.md`](docs/DEEP_DIVE.md) defines every concept (plain definition + example + why
+> it's relevant) and maps each notebook; [`docs/CODE_WALKTHROUGH.md`](docs/CODE_WALKTHROUGH.md)
+> justifies every `src/` function line by line.
+
 ## Layout
 ```
 data/raw/  data/processed/   source + cleaned CSVs
-src/       config · data (wine load/clean/dedup) · eda (shared stats & plots)
-notebooks/ 00_data_cleaning · 01_advanced_eda   (more parts to come)
+src/       config · data (load/clean/dedup/engineer) · modeling (split/QWK/rounder) · eda (shared)
+notebooks/ 00_data_cleaning … 10_capstone   (11 executed notebooks)
+docs/      DEEP_DIVE.md · CODE_WALKTHROUGH.md   (beginner-friendly)
 reports/figures/             saved PNGs
 build_notebooks.py           regenerates notebooks from source
 ```
