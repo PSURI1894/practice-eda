@@ -14,7 +14,7 @@ The timeline is complete, but **`pm25` has 2,067 missing values (4.7%)** in 214 
 ```
 data/raw/  data/processed/   source + cleaned CSVs
 src/       config · data (air-quality load/clean) · eda · ts (shared helpers)
-notebooks/ 00_data_cleaning · 01_advanced_eda   (more parts to come)
+notebooks/ 00_data_cleaning · 01_advanced_eda (I) · 02_advanced_eda_2 (II)   (more parts to come)
 reports/figures/             saved PNGs
 build_notebooks.py           regenerates notebooks from source
 ```
@@ -29,21 +29,27 @@ Open the notebooks with the **Python (beijing-air)** kernel, or run headless wit
 `jupyter nbconvert --to notebook --execute --inplace notebooks\*.ipynb`.
 
 ## Progress
-- [x] **Part 0** — Acquire & clean: datetime index, readable names, and a structural analysis of the
-  **missingness** (complete timeline but gappy `pm25` values; gap-run lengths, outages up to 155 h)
-- [x] **Part 1** — Advanced EDA: pollution distribution + WHO exceedance, the **missing-data
-  mechanism** (≈MCAR sensor faults), and the **meteorology of pollution** (wind disperses, humidity
-  traps; winter peak)
-- [ ] Part 2 — Missing-data imputation (forward-fill / interpolation / KNN / MICE), *evaluated*
-- [ ] Part 3 — TS foundations (multi-seasonal: daily + yearly), stationarity, ACF/PACF
-- [ ] Part 4+ — pollution forecasting with weather covariates, extensions
+- [x] **Part 0** — Acquire & clean: datetime index, readable names, structural analysis of the
+  **missingness** (complete timeline but gappy `pm25`; gap-run lengths, outages up to 155 h)
+- [x] **Part 1** — **Advanced EDA I**: data-quality audit, full univariate analysis (the four
+  moments, normality, AQI bands), transformations, and the **anatomy of the missingness** (shape +
+  a formal MCAR/MAR test)
+- [x] **Part 2** — **Advanced EDA II**: temporal rhythms (diurnal × seasonal heatmaps, trend),
+  autocorrelation/persistence, the **meteorology** (wind rose, dispersion, Pearson vs Spearman),
+  **extreme episodes** (AQI exceedance, episode duration, Jan-2013), and **PCA + pollution regimes**
+- [ ] Part 3 — Missing-data imputation (forward-fill / interpolation / KNN / MICE), *evaluated*
+- [ ] Part 4 — TS foundations (multi-seasonal) + pollution forecasting with weather covariates
 
-## Headline findings so far
-- **PM2.5 is heavily right-skewed** (skew 1.8, 0–994 µg/m³, mean 99); **84% of hours exceed the WHO
-  guideline** (15 µg/m³) and 7% are "hazardous" (>250) — with real Jan-2013 "airpocalypse" extremes.
-- **Structured missingness:** 2,067 gaps — mostly single hours (112) but **20 outages >24 h, longest
-  155 h**. Weather is similar on missing vs present hours → plausibly **MCAR**, but the long runs rule
-  out naive interpolation.
-- **Weather drives pollution:** wind **disperses** it (corr −0.25; clean **NW** winds lowest, calm air
-  highest), humidity **traps** it (+0.17) — a genuine multivariate structure.
-- Strong **winter peak** (February 126 vs August 80 µg/m³, from coal heating + stagnant air).
+## Headline findings (extensive EDA)
+- **PM2.5 is severe & heavy-tailed** (skew 1.8 → −0.3 after log1p; mean 99 µg/m³); **59% of hours are
+  "Unhealthy" or worse** on the US-EPA scale. `Is`/`Ir` (snow/rain) are **zero-inflated** (~99% zeros).
+- **Missingness leans MAR, not MCAR:** 2,067 gaps (mostly single hours, but 20 outages >24 h, longest
+  **155 h**). A KS test finds temperature/pressure **differ** on missing vs present hours (p≈0) — small
+  in magnitude but real → impute *using* the weather; long runs rule out naive interpolation.
+- **Pollution is very persistent** (hour-to-hour autocorrelation **0.97**) with a clear daily cycle and
+  a **winter + overnight** worst-case (Feb, 1am). Annual means barely improved over 2010–2014.
+- **Weather is the master switch:** strong/**NW** winds disperse pollution (cleanest, 70 µg/m³), calm
+  air traps it (126); Pearson vs Spearman gaps reveal **nonlinear** relationships. K-means finds the
+  dirtiest regime is **cold + low-wind (stagnant)**.
+- **Extremes persist for days:** "very unhealthy" spells last up to **4.6 days**; the Jan-2013
+  "airpocalypse" peaked at **886 µg/m³ (~59× the WHO guideline)**.

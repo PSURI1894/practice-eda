@@ -35,6 +35,14 @@ def clean(df: pd.DataFrame | None = None) -> pd.DataFrame:
     return df
 
 
+def aqi_category(s: pd.Series) -> pd.Series:
+    """US-EPA PM2.5 air-quality bands (24h breakpoints, applied per hour for illustration).
+    Turns a concentration into a health-relevant ordered category."""
+    edges = [-0.1, 12, 35.4, 55.4, 150.4, 250.4, np.inf]
+    labels = ["Good", "Moderate", "Unhealthy(sens)", "Unhealthy", "Very unhealthy", "Hazardous"]
+    return pd.cut(s, bins=edges, labels=labels)
+
+
 def gap_runs(s: pd.Series) -> pd.Series:
     """Lengths of each run of consecutive missing values — shows the *shape* of the missingness
     (a few long sensor outages vs many scattered single hours)."""
