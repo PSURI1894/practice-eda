@@ -5,6 +5,11 @@ A second practice in the `practice-eda` collection, on a very different data reg
 and **multiple seasonalities** (daily / weekly / yearly) — the things a financial return series
 lacks.
 
+> **New to this?** Start with the **beginner-friendly in-depth docs**:
+> [`docs/DEEP_DIVE.md`](docs/DEEP_DIVE.md) defines every concept (plain definition + example + why
+> it's relevant) and maps each notebook; [`docs/CODE_WALKTHROUGH.md`](docs/CODE_WALKTHROUGH.md)
+> justifies every `src/` function line by line.
+
 ## Dataset (`data/raw/bike_hour.csv`)
 UCI **Bike-Sharing** hourly data, Washington D.C., 2011–2012 (**17,379 rows × 17 cols**;
 reassembled from the dotnet/machinelearning-samples train+test mirror). Target = **`cnt`**
