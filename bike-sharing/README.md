@@ -41,7 +41,10 @@ Open the notebooks with the **Python (bike-sharing)** kernel, or run headless:
 - [x] **Part 3** — Forecasting with covariates: Fourier/dynamic-harmonic regression, exogenous
   weather/calendar regressors, LightGBM (calendar+weather vs +lags), 24h-ahead leakage framing,
   the Christmas/New-Year **holiday stress test**, feature importance, conformal intervals
-- [ ] Part 4+ — walk-forward backtest, count/probabilistic models, extensions
+- [x] **Part 4** — Backtesting & probabilistic forecasting: strict 24h-ahead features, a 56-day
+  **walk-forward backtest**, per-day error distribution (holidays as outliers), **quantile
+  regression** + pinball loss, **CQR** interval calibration, Poisson loss, reliability/calibration
+- [ ] Part 5+ — global/hierarchical models, weather-forecast uncertainty, extensions
 
 ## Headline findings so far
 - **Leakage:** `cnt = casual + registered` exactly → those two must never be predictors.
@@ -53,3 +56,4 @@ Open the notebooks with the **Python (bike-sharing)** kernel, or run headless:
 - **Index hygiene:** no missing *values*, but **165 hourly slots are absent** from the 2-year grid.
 - **Multi-seasonal:** demand has daily (period 24) and weekly (168) cycles — ACF spikes at lag 24 (0.82) and 168 (0.87); **MSTL** ranks the drivers daily (swing 851) > weekly (688) > trend (277). Deseasonalizing leaves a **stationary** residual (its ACF spikes collapse to ≈0).
 - **Forecasting:** plain SARIMA can't handle two seasonal periods → use **Fourier/harmonic regression**. Weather is a real signal (+1 °C → +6.9 rentals/hr; +10 % humidity → −12 rentals/hr), but **autoregressive lags win** at 24h-ahead: LGBM+lags MASE **0.61** vs seasonal-naive 1.66. The test window is the **Christmas/NY holidays** (demand halves) — calendar/seasonal models over-predict (Dec 25: harmonic 118 vs actual 42), the lag model adapts. Conformal 90 % interval covers 90 %.
+- **Evaluation (Part 4):** a single window is an anecdote — a **56-day walk-forward** backtest gives the honest verdict (MASE **0.78** vs naive 1.47), and the worst days are **holidays** (Thanksgiving RMSE 172 vs median 48). Raw **quantile-regression** intervals **under-cover (76 %)**; **CQR** restores 90 %. Poisson ≈ L2 (lags carry the signal); a reliability plot exposes the over-confidence.

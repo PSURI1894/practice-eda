@@ -9,7 +9,7 @@ findings) so a new practice never collides with an old one.
 | folder | dataset(s) | covers |
 |---|---|---|
 | [`sp500-shiller/`](sp500-shiller/) | S&P 500 (Shiller, 1871→), Telco Churn, Mauna Loa CO₂, 12-stock panel | Full course: Advanced EDA → TS foundations → forecasting → multivariate → ML/DL → evaluation, plus GARCH/DCC volatility stretches (Parts 0–10) |
-| [`bike-sharing/`](bike-sharing/) | UCI Bike-Sharing hourly demand (2011–12) | Advanced EDA & demand forecasting with exogenous weather/calendar drivers + multi-seasonality (Parts 0–3; more in progress) |
+| [`bike-sharing/`](bike-sharing/) | UCI Bike-Sharing hourly demand (2011–12) | Advanced EDA → multi-seasonal TS → covariate forecasting → walk-forward backtesting & probabilistic intervals (Parts 0–4; more in progress) |
 
 _New practice → new sibling folder (e.g. `nyc-taxi-eda/`)._
 
