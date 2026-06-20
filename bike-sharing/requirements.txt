@@ -8,6 +8,7 @@ statsmodels>=0.14
 scikit-learn>=1.4
 lightgbm>=4.5          # gradient-boosted trees for demand forecasting
 statsforecast>=2.0     # AutoARIMA (NumPy-2-safe)
+shap>=0.46             # model interpretability (Part 5)
 
 # Notebook tooling
 jupyter
