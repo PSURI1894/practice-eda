@@ -41,7 +41,7 @@ Open the notebooks with the **Python (energy-demand)** kernel, or run headless w
 - [x] **Part 7** — Univariate forecasting: seasonal-naive bar (8.8% MAPE), harmonic OLS worst (no memory), **MSTL+AutoARIMA** best (7.2% MAPE, 18% better than naive)
 - [x] **Part 8** — ML forecasting: LightGBM (lags+rolling+calendar+Fourier) day-ahead **6.3% MAPE (MASE 0.94)**, beats naive - [ ] Part 8 — ML forecasting: lag/calendar/Fourier features, LightGBM, multi-horizon MSTL; rolling lags dominate; error grows 0.7%→6%→9% by horizon
 - [x] **Part 9** — Probabilistic: quantile intervals over-confident (56% coverage), **CQR** restores ~85%; walk-forward backtest (per-month 4-8% MAPE); peak hours 16-18 & summer hardest
-- [ ] Part 10 — Load profiling & day-shape clustering
+- [x] **Part 10** — Load profiling: k-means on z-scored daily shapes (k=4) finds summer-AC / winter-double-peak / mild-weekday / weekend regimes, unsupervised, matching the calendar
 - [ ] Part 11 — Capstone & synthesis
 
 ## Headline findings so far

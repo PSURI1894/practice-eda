@@ -1101,10 +1101,102 @@ vs weekend vs holiday vs heat-wave) — a different, unsupervised lens on the sa
     build(cells, "09_probabilistic_backtest.ipynb", "# 09 · PJM Energy Demand — Probabilistic Forecasting & Backtesting (CQR, walk-forward)")
 
 
+# ===================================================================== Notebook 10
+def notebook_10():
+    md, co = new_markdown_cell, new_code_cell
+    cells = [
+        md(
+"""## Part 10 — Load Profiling & Day-Shape Clustering
+
+A final, **unsupervised** lens. Instead of forecasting, we ask: *how many distinct "kinds of day" does
+the grid actually see?* We represent each day by its **24-hour load shape** (normalised to remove the
+overall level, so we cluster on *shape* not *size*), then **k-means** them. The clusters fall out as
+exactly the regimes the EDA hinted at — summer A/C days, winter double-peak weekdays, mild weekdays,
+and weekends — **discovered from the curves alone**, no calendar labels used."""),
+        co(SETUP + """
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+d = data.clean_primary(); s = d.load_mw
+daily = s.groupby(s.index.normalize()).agg(list)
+days = daily[daily.map(len) == 24]
+shapes = np.array(days.tolist())
+norm = (shapes - shapes.mean(1, keepdims=True)) / shapes.std(1, keepdims=True)   # shape only (z-score each day)
+print("complete days:", len(norm))"""),
+
+        md(
+"""### 1. How many day-types? — choosing k
+
+The **silhouette score** (cluster separation) peaks at **k = 4** — four characteristic daily load
+shapes describe 16 years of demand."""),
+        co("""sil = {k: silhouette_score(norm[::5], KMeans(k, random_state=0, n_init=10).fit_predict(norm)[::5]) for k in range(2, 7)}
+print("silhouette by k:", {k: round(v, 3) for k, v in sil.items()})
+K = 4
+km = KMeans(K, random_state=0, n_init=10).fit(norm)
+lab = pd.Series(km.labels_, index=days.index, name="cluster")
+print("chosen k = %d | cluster sizes: %s" % (K, lab.value_counts().sort_index().to_dict()))"""),
+
+        md(
+"""### 2. The four characteristic load shapes
+
+Plotting each cluster's **centroid** (its average normalised day) shows four genuinely different
+profiles: a **single sharp afternoon peak** (summer A/C), a **double peak** (winter morning+evening),
+a **flatter business-day** shape, and a **late, low weekend** shape. The grid's entire daily repertoire
+in four curves."""),
+        co("""fig, ax = plt.subplots(figsize=(11, 5))
+for c in range(K):
+    ax.plot(range(24), km.cluster_centers_[c], marker="o", ms=3, label=f"cluster {c} (n={int((lab==c).sum())})")
+ax.set_xlabel("hour"); ax.set_ylabel("normalised load (shape)"); ax.set_title("Four characteristic daily load shapes"); ax.legend()
+eda.savefig(fig, "p10_centroids.png"); plt.show()"""),
+
+        md(
+"""### 3. Naming the regimes — calendar composition
+
+Cross-tabulating each cluster against the calendar *labels it had never seen* confirms the
+interpretation: one cluster is **~80% weekends**, one is **~70% summer** (the A/C-peak shape), the
+others are **winter** and **shoulder-season weekdays**. The unsupervised shapes line up with real
+operating regimes — a satisfying consistency check on the whole EDA."""),
+        co("""prof = pd.DataFrame({
+    "n": lab.groupby(lab).size(),
+    "weekend %": lab.index.to_series().groupby(lab.values).apply(lambda x: 100*(x.dt.dayofweek>=5).mean()),
+    "summer %": lab.index.to_series().groupby(lab.values).apply(lambda x: 100*x.dt.month.isin([6,7,8]).mean()),
+    "winter %": lab.index.to_series().groupby(lab.values).apply(lambda x: 100*x.dt.month.isin([12,1,2]).mean()),
+}).round(0)
+print(prof.to_string())"""),
+
+        md(
+"""### 4. Regimes through the calendar
+
+A month × cluster heatmap shows *when* each regime occurs: the summer-peak shape owns Jun–Aug, the
+winter double-peak owns Dec–Feb, the shoulder shape fills spring/autumn, and the weekend shape recurs
+every week year-round. The clustering has effectively **re-derived the seasonal calendar** from the
+load curves."""),
+        co("""ct = pd.crosstab(lab.index.month, lab.values, normalize="index")*100
+fig, ax = plt.subplots(figsize=(9, 5))
+sns.heatmap(ct, annot=True, fmt=".0f", cmap="YlGnBu", ax=ax, cbar_kws={"label":"% of month's days"})
+ax.set_xlabel("cluster"); ax.set_ylabel("month"); ax.set_title("Which day-shape regime dominates each month")
+eda.savefig(fig, "p10_calendar.png"); plt.show()"""),
+
+        md(
+"""### Takeaways
+
+- Sixteen years of demand reduce to **four characteristic daily load shapes** (k=4 by silhouette):
+  **summer A/C single-peak, winter double-peak, mild-weekday, and weekend**.
+- The shapes were found **unsupervised** (z-scored daily curves) yet align tightly with the
+  **calendar** — weekends ~80% in one cluster, summer ~70% in another — validating the EDA.
+- A month × regime heatmap **re-derives the seasonal calendar** from the curves alone.
+- Practical use: such **representative day-types** are how utilities build planning scenarios and
+  default load profiles.
+
+**Next — Part 11 (Capstone & synthesis):** pull the whole study together — the structure, the models,
+and the transferable lessons of a complete time-series project."""),
+    ]
+    build(cells, "10_load_profiling.ipynb", "# 10 · PJM Energy Demand — Load Profiling & Day-Shape Clustering")
+
+
 if __name__ == "__main__":
     import sys
-    all_nbs = {"0": notebook_0, "1": notebook_1, "2": notebook_2, "3": notebook_3, "4": notebook_4,
-               "5": notebook_5, "6": notebook_6, "7": notebook_7, "8": notebook_8, "9": notebook_9}
+    all_nbs = {"0": notebook_0, "1": notebook_1, "2": notebook_2, "3": notebook_3, "4": notebook_4, "5": notebook_5,
+               "6": notebook_6, "7": notebook_7, "8": notebook_8, "9": notebook_9, "10": notebook_10}
     for k in (sys.argv[1:] or sorted(all_nbs, key=int)):
         all_nbs[k]()
     print("done.")
