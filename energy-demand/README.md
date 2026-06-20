@@ -34,7 +34,7 @@ Open the notebooks with the **Python (energy-demand)** kernel, or run headless w
 - [x] **Part 1** — Advanced EDA I: distribution, **triple seasonality**, summer-vs-winter daily shapes,
   weekend/holiday effects, **load-duration curve**, the declining long-run trend
 - [x] **Part 2** — Advanced EDA II: ramp rates (morning +2450 MW/h, extremes ±7 GW/h), summer volatility (17 GW swing), peak-hour shift, rising summer/winter ratio, persistence (lag-1 0.97)
-- [ ] Part 3 — TS foundations: stationarity (ADF×KPSS), ACF/PACF, **MSTL** multi-seasonal decomposition
+- [x] **Part 3** — TS foundations: ADF×KPSS conflict (seasonality trap, fixed by seasonal differencing), ACF/PACF (24h spikes), **MSTL** (daily strength 0.86, weekly 0.53), annual STL (bimodal)
 - [ ] Part 4 — Spectral diagnostics: periodogram/FFT, spectrogram, long-memory
 - [ ] Part 5 — Multivariate: regional panel, **PCA common factor**, cross-correlation / lead-lag
 - [ ] Part 6 — Anomaly & event detection: holidays, extremes, change-points
