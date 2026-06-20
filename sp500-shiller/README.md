@@ -45,7 +45,7 @@ Run `00` first (it writes `data/processed/`), then `01`.
 - [x] **Part 2** — TS foundations: index hygiene, decomposition (classical/STL on CO₂ + S&P), stationarity (ADF×KPSS decision table), ACF/PACF, volatility clustering (ARCH), differencing
 - [x] **Part 3** — Univariate forecasting: time-split + metrics (MASE vs MAPE), baselines, ETS (SES→Holt→Holt-Winters), ARIMA/SARIMA, Box–Jenkins diagnostics, `auto_arima` (statsforecast), S&P reality check
 - [x] **Part 4** — Multivariate: clustered correlation, PCA market factor, VAR, Granger-causality matrix, cointegration (Engle–Granger + Johansen), VECM + pairs-trading spread
-- [ ] Part 5 — ML/DL forecasting (LightGBM, Prophet)
+- [x] **Part 5** — ML forecasting: supervised reframing, leakage discipline (`.shift(1)`), the tree trend-extrapolation trap + difference fix, LightGBM (recursive/direct), feature importance, Prophet, modern landscape
 - [ ] Part 6 — Evaluation (MASE/WAPE, walk-forward CV, conformal intervals)
 
 ## Headline findings so far
@@ -61,3 +61,5 @@ Run `00` first (it writes `data/processed/`), then `01`.
 - Tooling note: `pmdarima` is NumPy-2-incompatible; this project uses **statsforecast `AutoARIMA`** instead.
 - Multivariate: 12 stocks all positively correlated (avg 0.33); **PCA PC1 = 39% = the market factor** (all-positive loadings); clustering recovers sectors unsupervised.
 - Cointegration is **rare** — only **KO–PEP** of 6 same-sector pairs (Engle–Granger p=0.03, Johansen rank 1). AAPL–KO are 0.9-correlated in levels yet *not* cointegrated (spurious-regression trap). That stationary spread is the pairs-trading signal (VECM error-correction).
+- ML forecasting: trees **can't extrapolate** — LightGBM on CO₂ *levels* fails (MASE 1.01, worse than naive, can't exceed its training ceiling); modelling the **difference** fixes it (MASE 0.23, 4×). On this clean series the decomposition models win (Prophet 0.17 ≈ Holt-Winters 0.18 > LightGBM) — ML isn't automatically better.
+- Leakage discipline: every rolling feature is `.shift(1)` (window ends at t-1); the model's feature importance rediscovered the **lag-12 seasonality** on its own.

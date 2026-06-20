@@ -1,4 +1,4 @@
-# Core scientific + EDA + time-series stack (Parts 0-4).
+# Core scientific + EDA + time-series stack.
 # Pinned to a known-good Python 3.12 wheel set.
 pandas>=2.2,<3
 numpy>=1.26,<2.2
@@ -13,7 +13,8 @@ jupyter
 ipykernel
 nbconvert
 
-# Forecasting extras are installed later (Parts 3 & 5) to avoid resolver conflicts:
-#   pmdarima  (auto_arima)   -> Part 3
-#   prophet                  -> Part 5
-#   lightgbm                 -> Part 5
+# Forecasting
+statsforecast>=2.0     # AutoARIMA (Part 3) — the NumPy-2-safe replacement for pmdarima
+lightgbm>=4.5          # gradient-boosted trees (Part 5)
+prophet>=1.1           # additive decomposition model (Part 5)
+# NOTE: pmdarima is intentionally NOT used — it is incompatible with NumPy 2.x.
