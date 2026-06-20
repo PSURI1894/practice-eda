@@ -37,7 +37,7 @@ Open the notebooks with the **Python (wine-quality)** kernel, or run headless wi
 - [x] **Part 3** — Feature engineering: log transforms, outliers, engineered chemistry (alcohol/density +0.48 beats all)
 - [x] **Part 4** — Modeling framework: leakage *demonstrated* (1-NN 0.58→0.43 deduped), stratified split, the classify/regress/ordinal fork, **QWK** deep-dive, baselines (majority = 44% acc but **0 QWK**)
 - [x] **Part 5** — Classification: logistic/RF/LightGBM (trees QWK ~0.51 > logistic 0.46); 95% within ±1 grade; rare grades 3/9 collapse to 0% recall
-- [ ] Part 6 — Regression & ordinal framing (regress+round vs classify, QWK comparison)
+- [x] **Part 6** — Regression & ordinal: regression+round (QWK 0.53) > classification (0.49); optimized rounder &rarr; 0.56; Frank&ndash;Hall ordinal; **framing > model**
 - [ ] Part 7 — Class-imbalance deep-dive (class weights, SMOTE, the rare-grade problem)
 - [ ] Part 8 — Probability calibration (reliability curves, isotonic / Platt)
 - [ ] Part 9 — Interpretability (gain / permutation / SHAP importance, partial dependence)

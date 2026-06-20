@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+from scipy.optimize import minimize
 from sklearn.base import clone
 from sklearn.metrics import (accuracy_score, cohen_kappa_score, f1_score,
                              mean_absolute_error)
@@ -64,3 +65,26 @@ def cv_qwk(model, X: pd.DataFrame, y: pd.Series, n: int = 5, seed: int = 0) -> n
         m = clone(model).fit(X.iloc[tr], y.iloc[tr])
         scores.append(qwk(y.iloc[te], m.predict(X.iloc[te])))
     return np.array(scores)
+
+
+class OptimizedRounder:
+    """Learn the cut points that map a *continuous* ordinal prediction to grades 3..9 so as to
+    MAXIMISE QWK on the training fold — instead of naive round-at-.5. Under class imbalance the best
+    cut points are asymmetric (e.g. the 8/9 boundary is pushed high because grade 9 is so rare).
+    A standard trick from ordinal-regression / Kaggle practice."""
+
+    def __init__(self, labels=LABELS):
+        self.labels = np.asarray(labels)
+        self.cuts_ = (self.labels[:-1] + 0.5).astype(float)   # default = naive rounding
+
+    def _apply(self, p, cuts):
+        return self.labels[np.digitize(np.asarray(p), np.sort(cuts))]
+
+    def fit(self, p, y):
+        loss = lambda c: -qwk(y, self._apply(p, c))
+        self.cuts_ = minimize(loss, self.cuts_, method="Nelder-Mead",
+                              options={"maxiter": 2000, "xatol": 1e-3, "fatol": 1e-4}).x
+        return self
+
+    def predict(self, p):
+        return self._apply(p, self.cuts_)
