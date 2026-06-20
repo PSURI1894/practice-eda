@@ -40,7 +40,7 @@ Open the notebooks with the **Python (wine-quality)** kernel, or run headless wi
 - [x] **Part 6** — Regression & ordinal: regression+round (QWK 0.53) > classification (0.49); optimized rounder &rarr; 0.56; Frank&ndash;Hall ordinal; **framing > model**
 - [x] **Part 7** — Class imbalance: class weights / oversample / SMOTE all lift QWK+macro-F1+rare-recall (SMOTE 3x rare recall) at ~1.5pt accuracy cost; hard ceiling at grades 3/9 (n&le;22)
 - [x] **Part 8** — Calibration: raw LightGBM ECE 0.088; isotonic &rarr; 0.019 (Brier down); SMOTE inflates probabilities (worse Brier) &rarr; resample+recalibrate
-- [ ] Part 9 — Interpretability (gain / permutation / SHAP importance, partial dependence)
+- [x] **Part 9** — Interpretability: gain vs permutation vs SHAP (gain mis-ranks correlated alcohol_density LAST, SHAP/perm FIRST); beeswarm, dependence, local waterfall; associational caveats
 - [ ] Part 10 — Capstone: red/white classifier + synthesis
 
 ## Headline findings so far

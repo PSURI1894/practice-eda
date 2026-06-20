@@ -8,6 +8,7 @@ statsmodels>=0.14       # VIF for multicollinearity
 scikit-learn>=1.4       # classification, PCA, calibration, cross-validation
 lightgbm>=4.5           # gradient-boosted trees for quality prediction
 imbalanced-learn>=0.12  # SMOTE / resampling for the rare-grade problem (Part 7)
+shap>=0.44              # SHAP interpretability (Part 9)
 
 # Notebook tooling
 jupyter
