@@ -47,7 +47,10 @@ Open the notebooks with the **Python (bike-sharing)** kernel, or run headless:
 - [x] **Part 5** — Interpretability: gain vs permutation vs **SHAP** importance, **partial
   dependence** (nonlinear temp/hour effects), the hour×workingday **interaction**, SHAP
   beeswarm/local/dependence plots, and the caveats (PDP independence, predictor ≠ cause)
-- [ ] Part 6+ — global/hierarchical models, weather-forecast uncertainty, extensions
+- [x] **Part 6** — Weather-forecast uncertainty: simulate a day-ahead weather error, **Monte-Carlo**
+  propagation into a demand-forecast fan, decompose **input vs model** uncertainty, combined interval
+
+**Complete study (Parts 0–6).**
 
 ## Headline findings so far
 - **Leakage:** `cnt = casual + registered` exactly → those two must never be predictors.
@@ -61,3 +64,4 @@ Open the notebooks with the **Python (bike-sharing)** kernel, or run headless:
 - **Forecasting:** plain SARIMA can't handle two seasonal periods → use **Fourier/harmonic regression**. Weather is a real signal (+1 °C → +6.9 rentals/hr; +10 % humidity → −12 rentals/hr), but **autoregressive lags win** at 24h-ahead: LGBM+lags MASE **0.61** vs seasonal-naive 1.66. The test window is the **Christmas/NY holidays** (demand halves) — calendar/seasonal models over-predict (Dec 25: harmonic 118 vs actual 42), the lag model adapts. Conformal 90 % interval covers 90 %.
 - **Evaluation (Part 4):** a single window is an anecdote — a **56-day walk-forward** backtest gives the honest verdict (MASE **0.78** vs naive 1.47), and the worst days are **holidays** (Thanksgiving RMSE 172 vs median 48). Raw **quantile-regression** intervals **under-cover (76 %)**; **CQR** restores 90 %. Poisson ≈ L2 (lags carry the signal); a reliability plot exposes the over-confidence.
 - **Interpretability (Part 5):** the three importance lenses disagree — **gain buries `hr` (3.5 %)** while **permutation/SHAP rank it near the top** (never trust one). Partial dependence shows the nonlinear effects (temperature **saturates ~29 °C**, humidity hurts); the model rediscovered Part 1's **hour×workingday** interaction (workday peak 8am, weekend 5pm); SHAP gives additive per-prediction explanations (base 191 rentals).
+- **Input uncertainty (Part 6):** every model used the *realized* weather — perfect foresight. Simulating a day-ahead forecast error (temp RMSE 1.5 °C) and propagating it via Monte-Carlo, the **lag model degrades only ~4 %** vs **~6 %** for the calendar-only model, and weather is just **4 % of total predictive variance** (vs 10 %). **Autoregressive memory buys robustness to input-forecast error** — better demand modelling beats better weather forecasts.
