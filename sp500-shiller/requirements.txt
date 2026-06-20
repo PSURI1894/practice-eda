@@ -19,3 +19,8 @@ lightgbm>=4.5          # gradient-boosted trees (Part 5)
 prophet>=1.1           # additive decomposition model (Part 5)
 arch>=7.0              # ARCH/GARCH volatility models (Part 7)
 # NOTE: pmdarima is intentionally NOT used — it is incompatible with NumPy 2.x.
+
+# Deep learning (optional — Part 10 only; large download, pulls PyTorch).
+# On Windows, PyTorch's DLLs may be blocked by Smart App Control (WinError 4551);
+# disable SAC + reboot, or skip Part 10 (Part 9 covers DL with pure NumPy).
+neuralforecast>=3.0    # NHITS / LSTM on PyTorch (Part 10)

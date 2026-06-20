@@ -50,9 +50,10 @@ Run `00` first (it writes `data/processed/`), then `01`.
 - [x] **Part 6** — Evaluation & backtesting: the metric zoo (MASE/WAPE vs MAPE), time-series CV (expanding/sliding), walk-forward backtester, conformal prediction intervals + course capstone
 - [x] **Part 7** _(stretch)_ — Volatility modelling: ARCH-LM test, GARCH(1,1), Student-t fat tails, GJR leverage effect, vol forecasting, **GARCH vs VIX**, time-varying VaR + Kupiec backtest, 150-year regime coda
 - [x] **Part 8** _(stretch)_ — Multivariate volatility: **DCC-GARCH** dynamic correlation, EWMA baseline, correlation-spikes-in-crises (Aug 2015), DCC–VIX link, diversification erosion
-- [x] **Part 9** _(stretch)_ — Deep learning **from scratch in NumPy**: an MLP with backprop + Adam (no PyTorch — Smart App Control blocks it here), the same supervised reframing, honest scoreboard vs classical/LightGBM, and where deep models actually win
+- [x] **Part 9** _(stretch)_ — Deep learning **from scratch in NumPy**: an MLP with backprop + Adam, the same supervised reframing, honest scoreboard vs classical/LightGBM, and where deep models actually win
+- [x] **Part 10** _(stretch)_ — **Real deep models** via `neuralforecast` (PyTorch): NHITS & LSTM with conformal intervals, the grand scoreboard vs every prior model
 
-**Core course complete (Parts 0–6), plus quant & DL stretches (Parts 7–9).**
+**Core course complete (Parts 0–6), plus quant & DL stretches (Parts 7–10).**
 
 ## Headline findings so far
 - S&P 500 monthly returns: **excess kurtosis ≈ 16.7** (normal = 0) — fat tails are the norm, not the exception.
@@ -73,3 +74,4 @@ Run `00` first (it writes `data/processed/`), then `01`.
 - Volatility (Part 7): returns' *variance* is highly predictable (ARCH-LM p≈0). GARCH(1,1) persistence **0.93**, Student-t ν≈6.8 (fat tails), GJR leverage γ≈0.36 (downside shocks raise vol more). GARCH conditional vol **correlates 0.75 with the VIX**, which runs higher (the variance risk premium). Time-varying 1%/5% VaR backtests clean (Kupiec p=0.91/0.99).
 - Multivariate volatility (Part 8): **DCC-GARCH** makes the whole correlation matrix dynamic. Average pairwise correlation swung from **0.25 (calm) to 0.46** on the Aug-2015 sell-off and **correlates 0.70 with the VIX** — diversification erodes in crises (equal-weight portfolio keeps 56% of single-name vol in calm, 71% at the correlation peak).
 - Deep learning (Part 9): a hand-built NumPy MLP (backprop + Adam, 3,457 params) learns arbitrary functions (R²=1.0 sanity) and beats naive on CO₂ (MASE 0.32 vs 1.86), but still **loses to tuned Holt-Winters/LightGBM/SARIMA** — neural nets are data-hungry; their edge is many series + scale, not one tidy line.
+- Real deep models (Part 10): `neuralforecast` NHITS/LSTM on PyTorch with conformal intervals. **NHITS has 2.5M params for 480 points → over-parameterized, MASE 1.07 (fails); LSTM competitive at 0.32**; Holt-Winters (0.18) still wins the grand scoreboard. Confirms with real libraries what Parts 5/9 showed: match the model to the data regime. _(Requires PyTorch; Smart App Control was disabled to run it.)_

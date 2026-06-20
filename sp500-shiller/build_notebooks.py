@@ -2022,12 +2022,166 @@ pinned Python 3.12 venv; the deep-learning math here runs with nothing but NumPy
           "# 09 · Deep Learning from Scratch (NumPy) — Backprop, Adam & Forecasting  (stretch)")
 
 
+# ===================================================================== Notebook 10 (stretch)
+SETUP10 = SETUP + """
+import logging
+for lg in ["lightning","pytorch_lightning","lightning.pytorch","lightning.fabric",
+           "lightning.fabric.utilities.seed","lightning.pytorch.utilities.rank_zero"]:
+    logging.getLogger(lg).setLevel(logging.ERROR)
+import lightgbm as lgb
+from src import forecasting as fc, ml_forecast as mlf, neuralnet as nn
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.datasets import co2
+from neuralforecast import NeuralForecast
+from neuralforecast.models import NHITS, LSTM
+from neuralforecast.utils import PredictionIntervals
+
+co2m = co2.load_pandas().data["co2"].resample("MS").mean().interpolate()
+H = 24
+tr, te = co2m[:-H], co2m[-H:]
+nf_df = co2m.reset_index(); nf_df.columns = ["ds", "y"]; nf_df["unique_id"] = "co2"
+nf_train = nf_df.iloc[:-H]
+TK = dict(enable_progress_bar=False, enable_model_summary=False, logger=False,
+          accelerator="cpu", random_seed=0)
+import torch
+print("PyTorch", torch.__version__, "available — training real deep models on CPU")
+"""
+
+
+def notebook_10():
+    md = new_markdown_cell
+    co = new_code_cell
+    cells = [
+        md(
+"""## Part 10 — Real Deep Models: NHITS & LSTM (`neuralforecast`)  · *stretch*
+
+Part 9 built a neural net by hand to expose the mechanics. Now we run the **production** article:
+Nixtla's **`neuralforecast`** on **PyTorch**, with two architectures the from-scratch MLP can't
+match —
+
+- **LSTM** — a recurrent network that carries a **hidden state** through time, so it has genuine
+  *sequence memory* (our MLP saw only a fixed window of lags).
+- **NHITS** — Neural Hierarchical Interpolation: multi-rate pooling + hierarchical interpolation,
+  designed for **long-horizon, high-frequency** forecasting at scale.
+
+> PyTorch is available again (Smart App Control was disabled for this), so this notebook trains
+> real GPU-class models — here on CPU. Everything else in the repo still runs without it.
+
+The honest question: do these heavyweight models beat the tuned classical/tree baselines on our
+**single, small** CO₂ series? We score them head-to-head, with conformal prediction intervals."""),
+        co(SETUP10),
+
+        # ---------------------------------------------------------------- 1 data format
+        md(
+"""### 1. `neuralforecast`'s data format — built for *many* series
+
+Unlike statsmodels' one-series objects, neuralforecast expects a **long** dataframe with
+`unique_id`, `ds`, `y` — because its models are designed to train across *thousands* of series at
+once (a *global* model). We have one series (`unique_id = "co2"`), which is already the wrong
+regime for these models — keep that in mind for the scoreboard."""),
+        co("""print(nf_train.tail(3).to_string(index=False))
+print("\\nseries:", nf_train['unique_id'].nunique(), "| train rows:", len(nf_train), "| horizon:", H)"""),
+
+        # ---------------------------------------------------------------- 2 train
+        md(
+"""### 2. Train NHITS + LSTM (with conformal intervals)
+
+We fit both models (logs silenced) with `input_size = 48` (two seasonal cycles of context) and ask
+neuralforecast for **conformal prediction intervals** via rolling calibration windows — the same
+distribution-free idea as Part 6, built in. This trains a few times per model, so it takes a couple
+of minutes on CPU."""),
+        co("""models = [NHITS(h=H, input_size=48, max_steps=1000, **TK),
+          LSTM(h=H, input_size=48, max_steps=1000, encoder_hidden_size=64, **TK)]
+nf = NeuralForecast(models=models, freq="MS")
+nf.fit(nf_train, prediction_intervals=PredictionIntervals(n_windows=2))
+pred = nf.predict(level=[90]).set_index("ds")
+for m in nf.models:
+    n = sum(p.numel() for p in m.parameters())
+    print(f"{m.__class__.__name__:6s}: {n:,} parameters")
+print("\\npredicted columns:", [c for c in pred.columns if c != "unique_id"])"""),
+
+        # ---------------------------------------------------------------- 3 forecast plot
+        md("""### 3. The forecasts — with LSTM's conformal interval"""),
+        co("""fig, ax = plt.subplots(figsize=(12, 4.8))
+ax.plot(tr.index[-48:], tr.values[-48:], color="0.6", label="train")
+ax.plot(te.index, te.values, color="black", lw=2, label="actual")
+ax.plot(pred.index, pred["NHITS"], "--", lw=1.8, label="NHITS")
+ax.plot(pred.index, pred["LSTM"], "--", lw=1.8, label="LSTM")
+ax.fill_between(pred.index, pred["LSTM-lo-90"], pred["LSTM-hi-90"], color="tab:green", alpha=0.15, label="LSTM 90% interval")
+ax.set_title("neuralforecast NHITS & LSTM — CO₂ forecast"); ax.legend(ncol=2)
+eda.savefig(fig, "p10_nf_forecast.png"); plt.show()
+for c in ["NHITS","LSTM"]:
+    cov = ((te.values>=pred[c+"-lo-90"].values)&(te.values<=pred[c+"-hi-90"].values)).mean()
+    print("%-6s 90%%-interval empirical coverage = %.0f%%" % (c, 100*cov))"""),
+
+        # ---------------------------------------------------------------- 4 scoreboard
+        md(
+"""### 4. The grand scoreboard — every model in the course
+
+The same CO₂ 24-month holdout, every forecaster we've built: the two deep models vs the
+from-scratch MLP (Part 9), LightGBM (Part 5), and the classical winners (Part 3)."""),
+        co("""d = tr.diff().dropna(); sup = mlf.make_supervised(d, n_lags=12); cols = mlf.feature_cols(sup)
+mlp = nn.MLPRegressor(hidden=(64,32), epochs=600, lr=0.01, seed=0).fit(sup[cols].values, sup["y"].values)
+p_mlp = mlf.reconstruct_from_diff(mlf.recursive_forecast(mlp, d, H, cols), tr.iloc[-1]).values
+lgbm = lgb.LGBMRegressor(n_estimators=300, num_leaves=31, learning_rate=0.05,
+                         min_child_samples=10, random_state=0, verbose=-1).fit(sup[cols], sup["y"])
+p_lgbm = mlf.reconstruct_from_diff(mlf.recursive_forecast(lgbm, d, H, cols), tr.iloc[-1]).values
+hw  = ExponentialSmoothing(tr, trend="add", seasonal="add", seasonal_periods=12).fit().forecast(H).values
+sar = SARIMAX(tr, order=(1,1,1), seasonal_order=(1,1,1,12)).fit(disp=False).forecast(H).values
+board = fc.compare_models(te, {"NHITS": pred["NHITS"].values, "LSTM": pred["LSTM"].values,
+                               "NumPy-MLP": p_mlp, "LGBM-diff": p_lgbm,
+                               "Holt-Winters": hw, "SARIMA": sar}, tr, m=12)
+print(board[["MAE","RMSE","MASE"]].to_string())"""),
+        md("""Read it honestly. **LSTM** is competitive — its sequence memory makes it the strongest of the
+neural models and it edges the from-scratch MLP. **NHITS** underperforms here: it is engineered for
+long, high-frequency, *many*-series problems and is over-powered and finicky on ~480 monthly points.
+And the tuned **Holt-Winters still wins overall**. More architecture is not more accuracy when the
+data is small and clean — the exact lesson of Parts 5 and 9, now confirmed with the real libraries."""),
+
+        # ---------------------------------------------------------------- 5 when
+        md(
+"""### 5. So where do these models actually dominate?
+
+Not here. They win in the regime they were built for:
+
+- **Global training across thousands of series** — retail SKUs, sensors, every stock at once —
+  where the network borrows strength across series and amortises its capacity.
+- **High-frequency / long-horizon** data (hourly energy, web traffic) where there is enough signal
+  to feed millions of parameters.
+- **Rich exogenous covariates** and **probabilistic** output at scale.
+- **Foundation models** (TimeGPT, Chronos, TimesFM) take this further — pretrained on millions of
+  series, they forecast **zero-shot**, no training data required.
+
+The decision rule the whole course has repeated: **baseline → classical → trees → deep**, climbing
+only when the data's scale and structure justify it. On a single tidy seasonal line, you stop early."""),
+
+        # ---------------------------------------------------------------- takeaways
+        md(
+"""### Takeaways
+
+- **`neuralforecast` runs the real thing** — NHITS & LSTM on PyTorch — with built-in **conformal
+  intervals** (Part 6's idea, native).
+- **LSTM's recurrence** (hidden state through time) gives it sequence memory the Part-9 MLP lacks,
+  making it the best of the neural models on CO₂; **NHITS** is mis-matched to this small series.
+- **The classical Holt-Winters still wins** the grand scoreboard — deep models are **data- and
+  scale-hungry**, not universally better.
+- These models shine on **many series, high frequency, covariates, and scale**; **foundation
+  models** push to zero-shot. Match the model to the data regime.
+
+*This closes the forecasting arc end-to-end: baselines → ETS/ARIMA (3) → trees (5) → evaluation (6)
+→ from-scratch nets (9) → production deep models (10), every one scored on the same holdout.*"""),
+    ]
+    build(cells, "10_deep_learning_neuralforecast.ipynb",
+          "# 10 · Real Deep Models — NHITS & LSTM via neuralforecast  (stretch)")
+
+
 if __name__ == "__main__":
     import sys
     all_nbs = {"0": notebook_0, "1": notebook_1, "2": notebook_2, "3": notebook_3,
                "4": notebook_4, "5": notebook_5, "6": notebook_6, "7": notebook_7,
-               "8": notebook_8, "9": notebook_9}
-    targets = set(sys.argv[1:]) or set(all_nbs)
-    for k in sorted(targets):
+               "8": notebook_8, "9": notebook_9, "10": notebook_10}
+    targets = sys.argv[1:] or sorted(all_nbs, key=int)
+    for k in targets:
         all_nbs[k]()
     print("done.")
