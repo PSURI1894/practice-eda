@@ -1,0 +1,19 @@
+# Core scientific + EDA + time-series stack (Parts 0-4).
+# Pinned to a known-good Python 3.12 wheel set.
+pandas>=2.2,<3
+numpy>=1.26,<2.2
+scipy>=1.13
+matplotlib>=3.8
+seaborn>=0.13
+statsmodels>=0.14
+scikit-learn>=1.4
+
+# Notebook tooling
+jupyter
+ipykernel
+nbconvert
+
+# Forecasting extras are installed later (Parts 3 & 5) to avoid resolver conflicts:
+#   pmdarima  (auto_arima)   -> Part 3
+#   prophet                  -> Part 5
+#   lightgbm                 -> Part 5

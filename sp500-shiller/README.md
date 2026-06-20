@@ -1,0 +1,60 @@
+# Advanced EDA + Time Series — hands-on learning project
+
+A runnable, section-by-section walk through **Advanced EDA → Time Series Analysis →
+Forecasting (univariate & multivariate)**, on two real-world datasets. Notebooks are the
+primary deliverable; reusable statistics live in `src/`.
+
+## Datasets (`data/raw/`)
+| file | source | use |
+|---|---|---|
+| `telco_churn.csv` | IBM Telco Customer Churn (7,043×21) | cross-sectional Advanced EDA — categoricals, missingness, VIF, PCA |
+| `sp500_shiller.csv` | Shiller S&P 500 monthly, 1871→ (1,865×10) | time-series & forecasting half |
+| `vix_daily.csv` | CBOE VIX daily OHLC (9,210×5) | multivariate companion (Part 4) |
+
+## Layout
+```
+data/raw/         source CSVs (downloaded from GitHub mirrors)
+data/processed/   cleaned + feature-engineered outputs (built by Part 0)
+src/              config.py · data.py (load/clean) · eda.py (stats & plots)
+notebooks/        00_data_cleaning · 01_advanced_eda  (one per section)
+reports/figures/  saved PNGs
+build_notebooks.py  regenerates the notebooks from source
+```
+
+## Setup (one time)
+```powershell
+uv venv --python 3.12 .venv
+uv pip install --python .venv -r requirements.txt
+.venv\Scripts\python.exe -m ipykernel install --user --name advanced-eda --display-name "Python (advanced-eda)"
+```
+> Built on **Python 3.12** on purpose — the system 3.14 lacks wheels for pmdarima/prophet.
+> The forecasting extras (pmdarima, prophet, lightgbm) are installed later, in Parts 3 & 5.
+
+## Run
+Open a notebook in VS Code / Jupyter and pick the **Python (advanced-eda)** kernel, or run headless:
+```powershell
+.venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks\00_data_cleaning.ipynb
+.venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks\01_advanced_eda.ipynb
+```
+Run `00` first (it writes `data/processed/`), then `01`.
+
+## Progress
+- [x] **Part 0** — Acquire & clean (two disguised-missingness traps: Telco text/MAR, Shiller zero-placeholders)
+- [x] **Part 1** — Advanced EDA: four-view battery, normality/fat-tails, transforms, outliers, correlation trio + MI, VIF, Cramér's V, missing-data mechanisms
+- [x] **Part 2** — TS foundations: index hygiene, decomposition (classical/STL on CO₂ + S&P), stationarity (ADF×KPSS decision table), ACF/PACF, volatility clustering (ARCH), differencing
+- [x] **Part 3** — Univariate forecasting: time-split + metrics (MASE vs MAPE), baselines, ETS (SES→Holt→Holt-Winters), ARIMA/SARIMA, Box–Jenkins diagnostics, `auto_arima` (statsforecast), S&P reality check
+- [ ] Part 4 — Multivariate (VAR, Granger, cointegration/VECM, pairs)
+- [ ] Part 5 — ML/DL forecasting (LightGBM, Prophet)
+- [ ] Part 6 — Evaluation (MASE/WAPE, walk-forward CV, conformal intervals)
+
+## Headline findings so far
+- S&P 500 monthly returns: **excess kurtosis ≈ 16.7** (normal = 0) — fat tails are the norm, not the exception.
+- The 6 most extreme months are real history (1929, 2008, 2020) — *investigate, don't delete*.
+- Telco `TotalCharges`: 11 missing values, **100% at tenure 0** → MAR, not random.
+- `Contract` is the strongest single churn driver (Cramér's V ≈ 0.41; month-to-month churns ~43% vs ~3% on two-year).
+- S&P 500 price is **I(1)** (ADF p=1.0, KPSS p=0.01 → both say non-stationary); its returns are stationary → *model returns, not prices*.
+- Decomposition strengths: CO₂ seasonal **0.98** vs S&P 500 seasonal **0.00** — equities trend hard but have no calendar seasonality.
+- Returns ≈ white noise, but **squared** returns stay autocorrelated (Ljung-Box grows 17→324) → volatility clustering / ARCH. The lag-1 return autocorrelation (+0.27) is partly a Shiller monthly-averaging artifact.
+- Forecasting CO₂: Holt-Winters/SARIMA/AutoARIMA beat every baseline ~8× (MASE ~0.18–0.26 vs naive 1.86); a non-seasonal ARIMA fails (MASE 1.6) — seasonality must be modelled.
+- Forecasting S&P **returns**: nothing beats the mean (naive MASE 0.79, ARIMA 0.84) → near-efficient market; forecast *risk*, not direction. MAPE hits 1650% (returns cross 0) → use **MASE**.
+- Tooling note: `pmdarima` is NumPy-2-incompatible; this project uses **statsforecast `AutoARIMA`** instead.
