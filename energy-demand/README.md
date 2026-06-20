@@ -42,7 +42,7 @@ Open the notebooks with the **Python (energy-demand)** kernel, or run headless w
 - [x] **Part 8** — ML forecasting: LightGBM (lags+rolling+calendar+Fourier) day-ahead **6.3% MAPE (MASE 0.94)**, beats naive - [ ] Part 8 — ML forecasting: lag/calendar/Fourier features, LightGBM, multi-horizon MSTL; rolling lags dominate; error grows 0.7%→6%→9% by horizon
 - [x] **Part 9** — Probabilistic: quantile intervals over-confident (56% coverage), **CQR** restores ~85%; walk-forward backtest (per-month 4-8% MAPE); peak hours 16-18 & summer hardest
 - [x] **Part 10** — Load profiling: k-means on z-scored daily shapes (k=4) finds summer-AC / winter-double-peak / mild-weekday / weekend regimes, unsupervised, matching the calendar
-- [ ] Part 11 — Capstone & synthesis
+- [x] **Part 11** — Capstone & synthesis: system-in-numbers, final day-ahead scoreboard (LightGBM 6.3% > persistence 7.9% > harmonic 10.2%), transferable TS lessons
 
 ## Headline findings so far
 - **16 years × hourly** PJME demand (14,544–62,009 MW); local-time **DST artifacts** cleaned
