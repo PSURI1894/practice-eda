@@ -2,7 +2,11 @@
 
 A runnable, section-by-section walk through **Advanced EDA → Time Series Analysis →
 Forecasting (univariate & multivariate) → ML forecasting → Evaluation**, on real-world data.
-Seven notebooks (Parts 0–6); reusable statistics live in `src/`.
+Eleven notebooks (Parts 0–10); reusable statistics live in `src/`.
+
+> **In-depth documentation** — [`docs/DEEP_DIVE.md`](docs/DEEP_DIVE.md) defines every concept used
+> (definition + example + why it's relevant) and maps each notebook;
+> [`docs/CODE_WALKTHROUGH.md`](docs/CODE_WALKTHROUGH.md) justifies every `src/` function line by line.
 
 ## Datasets (`data/raw/`)
 | file | source | use |
