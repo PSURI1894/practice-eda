@@ -4,6 +4,11 @@ The third practice in the `practice-eda` collection, chosen to exercise the one 
 and bike-sharing practices lacked: **real, structured missing data**. Five years of hourly air
 pollution from the US Embassy in Beijing, with weather covariates.
 
+> **New to this?** Start with the **beginner-friendly in-depth docs**:
+> [`docs/DEEP_DIVE.md`](docs/DEEP_DIVE.md) defines every concept (plain definition + example + why
+> it's relevant) and maps each notebook; [`docs/CODE_WALKTHROUGH.md`](docs/CODE_WALKTHROUGH.md)
+> justifies every `src/` function line by line.
+
 ## Dataset (`data/raw/beijing_pm25.csv`)
 UCI **Beijing PM2.5** data (via the `jbrownlee/Datasets` mirror): **43,824 hourly rows × 13 cols,
 2010–2014**. Target = **`pm25`** (PM2.5 concentration, µg/m³). Weather: `DEWP` (dew point), `TEMP`,
