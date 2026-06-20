@@ -24,6 +24,20 @@ def fourier_features(index: pd.DatetimeIndex, periods=((24, 5), (168, 3), (8766,
     return pd.DataFrame(out, index=index)
 
 
+def ml_features(s: pd.Series, cal: pd.DataFrame, horizon: int) -> pd.DataFrame:
+    """Leakage-safe supervised features for an `horizon`-hour-ahead forecast — every lag is ≥ horizon,
+    so nothing newer than (target − horizon) leaks in. Used by the LightGBM models (Parts 8–9)."""
+    X = pd.DataFrame(index=s.index)
+    for L in sorted({horizon, horizon + 1, horizon + 2, horizon + 24, 168, 168 + horizon}):
+        if L >= horizon:
+            X[f"lag_{L}"] = s.shift(L)
+    X["roll24"] = s.shift(horizon).rolling(24).mean()
+    X["roll168"] = s.shift(horizon).rolling(168).mean()
+    for c in ("hour", "dow", "month", "is_holiday"):
+        X[c] = cal[c].values
+    return pd.concat([X, fourier_features(s.index, periods=((8766, 3),))], axis=1)
+
+
 def seasonal_naive(train: pd.Series, horizon: int, m: int) -> np.ndarray:
     """Forecast by repeating the last full season of length m (e.g. m=168 → 'same hour last week')."""
     last = train.values[-m:]

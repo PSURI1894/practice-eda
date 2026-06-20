@@ -39,7 +39,7 @@ Open the notebooks with the **Python (energy-demand)** kernel, or run headless w
 - [x] **Part 5** — Multivariate: 6-zone panel, all-pairs corr 0.83–0.94, **PCA PC1 = 90%** common (weather) factor (corr 0.99 w/ total), no lead-lag (zones simultaneous)
 - [x] **Part 6** — Anomaly & events: calendar-climatology z-scores (heat waves +, holidays &minus; &mdash; detector rediscovers July 4th), summer-clustered, change-points 2004/2011/2015 (efficiency-era step-downs)
 - [x] **Part 7** — Univariate forecasting: seasonal-naive bar (8.8% MAPE), harmonic OLS worst (no memory), **MSTL+AutoARIMA** best (7.2% MAPE, 18% better than naive)
-- [ ] Part 8 — ML forecasting: lag/calendar/Fourier features, LightGBM, multi-horizon
+- [x] **Part 8** — ML forecasting: LightGBM (lags+rolling+calendar+Fourier) day-ahead **6.3% MAPE (MASE 0.94)**, beats naive - [ ] Part 8 — ML forecasting: lag/calendar/Fourier features, LightGBM, multi-horizon MSTL; rolling lags dominate; error grows 0.7%→6%→9% by horizon
 - [ ] Part 9 — Probabilistic forecasting & walk-forward backtesting, prediction intervals, peak
 - [ ] Part 10 — Load profiling & day-shape clustering
 - [ ] Part 11 — Capstone & synthesis
