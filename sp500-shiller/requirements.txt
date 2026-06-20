@@ -17,4 +17,5 @@ nbconvert
 statsforecast>=2.0     # AutoARIMA (Part 3) — the NumPy-2-safe replacement for pmdarima
 lightgbm>=4.5          # gradient-boosted trees (Part 5)
 prophet>=1.1           # additive decomposition model (Part 5)
+arch>=7.0              # ARCH/GARCH volatility models (Part 7)
 # NOTE: pmdarima is intentionally NOT used — it is incompatible with NumPy 2.x.

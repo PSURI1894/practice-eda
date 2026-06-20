@@ -48,8 +48,9 @@ Run `00` first (it writes `data/processed/`), then `01`.
 - [x] **Part 4** — Multivariate: clustered correlation, PCA market factor, VAR, Granger-causality matrix, cointegration (Engle–Granger + Johansen), VECM + pairs-trading spread
 - [x] **Part 5** — ML forecasting: supervised reframing, leakage discipline (`.shift(1)`), the tree trend-extrapolation trap + difference fix, LightGBM (recursive/direct), feature importance, Prophet, modern landscape
 - [x] **Part 6** — Evaluation & backtesting: the metric zoo (MASE/WAPE vs MAPE), time-series CV (expanding/sliding), walk-forward backtester, conformal prediction intervals + course capstone
+- [x] **Part 7** _(stretch)_ — Volatility modelling: ARCH-LM test, GARCH(1,1), Student-t fat tails, GJR leverage effect, vol forecasting, **GARCH vs VIX**, time-varying VaR + Kupiec backtest, 150-year regime coda
 
-**Course complete (Parts 0–6).**
+**Core course complete (Parts 0–6), plus a volatility stretch (Part 7).**
 
 ## Headline findings so far
 - S&P 500 monthly returns: **excess kurtosis ≈ 16.7** (normal = 0) — fat tails are the norm, not the exception.
@@ -67,3 +68,4 @@ Run `00` first (it writes `data/processed/`), then `01`.
 - ML forecasting: trees **can't extrapolate** — LightGBM on CO₂ *levels* fails (MASE 1.01, worse than naive, can't exceed its training ceiling); modelling the **difference** fixes it (MASE 0.23, 4×). On this clean series the decomposition models win (Prophet 0.17 ≈ Holt-Winters 0.18 > LightGBM) — ML isn't automatically better.
 - Leakage discipline: every rolling feature is `.shift(1)` (window ends at t-1); the model's feature importance rediscovered the **lag-12 seasonality** on its own.
 - Evaluation: a single split is one lucky window — a **126-fold walk-forward** backtest confirms Holt-Winters (MASE 0.196) robustly beats LightGBM (0.219). MAPE 56.6% vs WAPE 9.5% on a near-zero series shows why metric choice matters. **Conformal** intervals hit 93.7% empirical coverage (90% target) with no distributional assumption.
+- Volatility (Part 7): returns' *variance* is highly predictable (ARCH-LM p≈0). GARCH(1,1) persistence **0.93**, Student-t ν≈6.8 (fat tails), GJR leverage γ≈0.36 (downside shocks raise vol more). GARCH conditional vol **correlates 0.75 with the VIX**, which runs higher (the variance risk premium). Time-varying 1%/5% VaR backtests clean (Kupiec p=0.91/0.99).
