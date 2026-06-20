@@ -103,6 +103,28 @@ def clean_vix(df: pd.DataFrame | None = None) -> pd.DataFrame:
     return df.set_index("date").sort_index()
 
 
+# --------------------------------------------------------------------------- stock panel (Part 4)
+# 12 S&P 500 large caps in 6 same-sector pairs (2013-2018 daily close), curated from the
+# plotly all_stocks_5yr mirror. The pairs give natural cointegration candidates.
+SECTORS = {
+    "AAPL": "Tech", "MSFT": "Tech", "JPM": "Bank", "BAC": "Bank",
+    "XOM": "Energy", "CVX": "Energy", "KO": "Staples", "PEP": "Staples",
+    "JNJ": "Health", "PFE": "Health", "WMT": "Retail", "TGT": "Retail",
+}
+
+
+def load_stock_panel() -> pd.DataFrame:
+    """Wide panel of daily close prices: rows = trading days, columns = tickers."""
+    df = pd.read_csv(DATA_RAW / "stock_panel.csv", parse_dates=["date"]).set_index("date")
+    return df.sort_index()
+
+
+def stock_log_returns(prices: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Daily log returns of the panel (stationary; the input to correlation/PCA/VAR/Granger)."""
+    px = load_stock_panel() if prices is None else prices
+    return np.log(px).diff().dropna()
+
+
 # --------------------------------------------------------------------------- build all
 def build_processed() -> dict[str, pd.DataFrame]:
     """Clean every dataset and persist to data/processed/. Returns the frames."""

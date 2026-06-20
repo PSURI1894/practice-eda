@@ -9,7 +9,8 @@ primary deliverable; reusable statistics live in `src/`.
 |---|---|---|
 | `telco_churn.csv` | IBM Telco Customer Churn (7,043×21) | cross-sectional Advanced EDA — categoricals, missingness, VIF, PCA |
 | `sp500_shiller.csv` | Shiller S&P 500 monthly, 1871→ (1,865×10) | time-series & forecasting half |
-| `vix_daily.csv` | CBOE VIX daily OHLC (9,210×5) | multivariate companion (Part 4) |
+| `vix_daily.csv` | CBOE VIX daily OHLC (9,210×5) | volatility companion |
+| `stock_panel.csv` | 12 S&P 500 large caps, daily 2013–18 (1,259×12) | multivariate: correlation, PCA, VAR, Granger, cointegration/pairs (Part 4) |
 
 ## Layout
 ```
@@ -43,7 +44,7 @@ Run `00` first (it writes `data/processed/`), then `01`.
 - [x] **Part 1** — Advanced EDA: four-view battery, normality/fat-tails, transforms, outliers, correlation trio + MI, VIF, Cramér's V, missing-data mechanisms
 - [x] **Part 2** — TS foundations: index hygiene, decomposition (classical/STL on CO₂ + S&P), stationarity (ADF×KPSS decision table), ACF/PACF, volatility clustering (ARCH), differencing
 - [x] **Part 3** — Univariate forecasting: time-split + metrics (MASE vs MAPE), baselines, ETS (SES→Holt→Holt-Winters), ARIMA/SARIMA, Box–Jenkins diagnostics, `auto_arima` (statsforecast), S&P reality check
-- [ ] Part 4 — Multivariate (VAR, Granger, cointegration/VECM, pairs)
+- [x] **Part 4** — Multivariate: clustered correlation, PCA market factor, VAR, Granger-causality matrix, cointegration (Engle–Granger + Johansen), VECM + pairs-trading spread
 - [ ] Part 5 — ML/DL forecasting (LightGBM, Prophet)
 - [ ] Part 6 — Evaluation (MASE/WAPE, walk-forward CV, conformal intervals)
 
@@ -58,3 +59,5 @@ Run `00` first (it writes `data/processed/`), then `01`.
 - Forecasting CO₂: Holt-Winters/SARIMA/AutoARIMA beat every baseline ~8× (MASE ~0.18–0.26 vs naive 1.86); a non-seasonal ARIMA fails (MASE 1.6) — seasonality must be modelled.
 - Forecasting S&P **returns**: nothing beats the mean (naive MASE 0.79, ARIMA 0.84) → near-efficient market; forecast *risk*, not direction. MAPE hits 1650% (returns cross 0) → use **MASE**.
 - Tooling note: `pmdarima` is NumPy-2-incompatible; this project uses **statsforecast `AutoARIMA`** instead.
+- Multivariate: 12 stocks all positively correlated (avg 0.33); **PCA PC1 = 39% = the market factor** (all-positive loadings); clustering recovers sectors unsupervised.
+- Cointegration is **rare** — only **KO–PEP** of 6 same-sector pairs (Engle–Granger p=0.03, Johansen rank 1). AAPL–KO are 0.9-correlated in levels yet *not* cointegrated (spurious-regression trap). That stationary spread is the pairs-trading signal (VECM error-correction).
