@@ -33,7 +33,7 @@ Open the notebooks with the **Python (wine-quality)** kernel, or run headless wi
   a `dedup()` for modelling), and the **imbalanced ordinal target**
 - [x] **Part 1** — Advanced EDA: imbalance + red/white split, univariate sweep of all 11 features,
   **quality drivers** (Spearman), **multicollinearity (VIF)**, red-vs-white chemistry, the good-wine picture
-- [ ] Part 2 — Multivariate structure (PCA, red/white separation, feature relationships)
+- [x] **Part 2** — Multivariate structure: PCA (PC1=red/white axis, 27%), t-SNE, quality is nonlinear (lives on PC2, weakly)
 - [ ] Part 3 — Imbalanced ordinal **classification** (baselines, LightGBM, macro-F1, confusion matrix)
 - [ ] Part 4+ — calibration, feature importance / SHAP, cost-sensitive thresholds
 
