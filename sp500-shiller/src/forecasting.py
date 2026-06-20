@@ -37,9 +37,10 @@ def forecast_metrics(y_true, y_pred, y_train, m: int = 1) -> dict:
     with np.errstate(divide="ignore", invalid="ignore"):
         mape = np.mean(np.abs(e / y_true)) * 100
         smape = np.mean(2 * np.abs(e) / (np.abs(y_true) + np.abs(y_pred))) * 100
-    scale = np.mean(np.abs(y_train[m:] - y_train[:-m]))      # in-sample (seasonal) naive MAE
+    wape = np.sum(np.abs(e)) / np.sum(np.abs(y_true)) * 100   # aggregate first -> robust to zeros
+    scale = np.mean(np.abs(y_train[m:] - y_train[:-m]))       # in-sample (seasonal) naive MAE
     mase = mae / scale if scale else np.nan
-    return {"MAE": mae, "RMSE": rmse, "MAPE%": mape, "sMAPE%": smape, "MASE": mase}
+    return {"MAE": mae, "RMSE": rmse, "MAPE%": mape, "sMAPE%": smape, "WAPE%": wape, "MASE": mase}
 
 
 def compare_models(test: pd.Series, preds: dict[str, np.ndarray], y_train: pd.Series,
