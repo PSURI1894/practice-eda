@@ -14,7 +14,7 @@ The timeline is complete, but **`pm25` has 2,067 missing values (4.7%)** in 214 
 ```
 data/raw/  data/processed/   source + cleaned CSVs
 src/       config · data (air-quality load/clean) · eda · ts (shared helpers)
-notebooks/ 00_data_cleaning · 01_advanced_eda (I) · 02_advanced_eda_2 (II) · 03_imputation · 04_forecasting
+notebooks/ 00_data_cleaning · 01_advanced_eda (I) · 02_advanced_eda_2 (II) · 03_imputation · 04_forecasting · 05_extreme_forecasting
 src/       …also impute.py (methods + masked-evaluation harness)
 reports/figures/             saved PNGs
 build_notebooks.py           regenerates notebooks from source
@@ -44,8 +44,11 @@ Open the notebooks with the **Python (beijing-air)** kernel, or run headless wit
 - [x] **Part 4** — **Pollution forecasting**: 24h-ahead PM2.5 (baselines → harmonic+weather →
   LightGBM+lags), the **AQI-exceedance warning** framing (precision/recall/F1 + confusion matrix), the
   **systematic under-prediction of extremes**, and feature importance
+- [x] **Part 5** — **Forecasting the extremes**: why L2 under-predicts (and why log-target makes it
+  worse), **quantile regression** for the tail, the no-free-lunch tradeoff, and a **probabilistic
+  exceedance-warning** system with cost-asymmetric threshold tuning (PR curve)
 
-**Full study (Parts 0–4): clean → extensive EDA → evaluated imputation → forecasting.**
+**Full study (Parts 0–5): clean → extensive EDA → evaluated imputation → forecasting → extremes.**
 
 ## Headline findings (extensive EDA)
 - **PM2.5 is severe & heavy-tailed** (skew 1.8 → −0.3 after log1p; mean 99 µg/m³); **59% of hours are
@@ -70,3 +73,8 @@ Open the notebooks with the **Python (beijing-air)** kernel, or run headless wit
   hours at **F1 0.76**, but it **under-predicts the extremes** (actual >300: ~360 vs ~250 forecast;
   the gap *worsens* with severity) — the key caveat for any pollution model. Drivers: recent pollution
   + dew point/pressure, matching the EDA.
+- **Extremes (Part 5):** an L2 model predicts the *mean* so it under-predicts spikes — and modelling
+  `log(pm25)` makes it **worse** (targets the median). **Quantile regression** captures the tail (q95
+  tracks spikes, **0.98 recall** of hazardous hours) but at higher MAE/lower precision — *no free
+  lunch*. The principled warning is a **probabilistic exceedance classifier** (avg-precision 0.83) with
+  the alarm threshold tuned to the cost asymmetry (lower it to prioritise recall for health).

@@ -84,4 +84,4 @@ def hybrid(gappy: pd.Series, weather: pd.DataFrame, short_max: int = 48) -> pd.S
     use_mice = gappy.isna() & (gap_length_per_point(gappy) > short_max)
     out = interp.copy()
     out[use_mice.to_numpy()] = mice[use_mice.to_numpy()]
-    return out
+    return out.clip(lower=0)   # PM2.5 is a concentration: MICE can dip slightly negative; floor at 0
