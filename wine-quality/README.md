@@ -39,7 +39,7 @@ Open the notebooks with the **Python (wine-quality)** kernel, or run headless wi
 - [x] **Part 5** — Classification: logistic/RF/LightGBM (trees QWK ~0.51 > logistic 0.46); 95% within ±1 grade; rare grades 3/9 collapse to 0% recall
 - [x] **Part 6** — Regression & ordinal: regression+round (QWK 0.53) > classification (0.49); optimized rounder &rarr; 0.56; Frank&ndash;Hall ordinal; **framing > model**
 - [x] **Part 7** — Class imbalance: class weights / oversample / SMOTE all lift QWK+macro-F1+rare-recall (SMOTE 3x rare recall) at ~1.5pt accuracy cost; hard ceiling at grades 3/9 (n&le;22)
-- [ ] Part 8 — Probability calibration (reliability curves, isotonic / Platt)
+- [x] **Part 8** — Calibration: raw LightGBM ECE 0.088; isotonic &rarr; 0.019 (Brier down); SMOTE inflates probabilities (worse Brier) &rarr; resample+recalibrate
 - [ ] Part 9 — Interpretability (gain / permutation / SHAP importance, partial dependence)
 - [ ] Part 10 — Capstone: red/white classifier + synthesis
 
