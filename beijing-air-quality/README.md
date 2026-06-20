@@ -14,7 +14,7 @@ The timeline is complete, but **`pm25` has 2,067 missing values (4.7%)** in 214 
 ```
 data/raw/  data/processed/   source + cleaned CSVs
 src/       config · data (air-quality load/clean) · eda · ts (shared helpers)
-notebooks/ 00_data_cleaning · 01_advanced_eda (I) · 02_advanced_eda_2 (II) · 03_imputation
+notebooks/ 00_data_cleaning · 01_advanced_eda (I) · 02_advanced_eda_2 (II) · 03_imputation · 04_forecasting
 src/       …also impute.py (methods + masked-evaluation harness)
 reports/figures/             saved PNGs
 build_notebooks.py           regenerates notebooks from source
@@ -41,7 +41,11 @@ Open the notebooks with the **Python (beijing-air)** kernel, or run headless wit
 - [x] **Part 3** — **Missing-data imputation, evaluated**: mask-and-score protocol, five methods
   (ffill/interp/climatology/KNN/MICE) compared **stratified by gap length**, distribution-preservation
   check, and a **hybrid** (interp short + MICE long) that wins — writes a gap-free `beijing_imputed.csv`
-- [ ] Part 4 — TS foundations (multi-seasonal) + pollution forecasting with weather covariates
+- [x] **Part 4** — **Pollution forecasting**: 24h-ahead PM2.5 (baselines → harmonic+weather →
+  LightGBM+lags), the **AQI-exceedance warning** framing (precision/recall/F1 + confusion matrix), the
+  **systematic under-prediction of extremes**, and feature importance
+
+**Full study (Parts 0–4): clean → extensive EDA → evaluated imputation → forecasting.**
 
 ## Headline findings (extensive EDA)
 - **PM2.5 is severe & heavy-tailed** (skew 1.8 → −0.3 after log1p; mean 99 µg/m³); **59% of hours are
@@ -61,3 +65,8 @@ Open the notebooks with the **Python (beijing-air)** kernel, or run headless wit
   (82 at 49h+) where **MICE** wins (64); **climatology collapses variance** (std 20 vs the true 96).
   A **hybrid** (interp ≤48h + MICE beyond) beats every method (MAE 45 vs 54), and the long outages are
   flagged in the saved gap-free series.
+- **Forecasting (Part 4):** day-ahead PM2.5 is hard for naive methods (persistence/climatology MASE
+  >1) but **LightGBM+lags+weather wins (MASE 0.68)**. As a warning system it flags hazardous (>150)
+  hours at **F1 0.76**, but it **under-predicts the extremes** (actual >300: ~360 vs ~250 forecast;
+  the gap *worsens* with severity) — the key caveat for any pollution model. Drivers: recent pollution
+  + dew point/pressure, matching the EDA.
