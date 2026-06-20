@@ -7,6 +7,7 @@ seaborn>=0.13
 statsmodels>=0.14
 scikit-learn>=1.4       # KNNImputer + IterativeImputer (MICE) for missing-data work
 lightgbm>=4.5           # gradient-boosted trees for pollution forecasting
+ruptures>=1.1           # change-point detection (Part 6)
 
 # Notebook tooling
 jupyter

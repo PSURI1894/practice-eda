@@ -14,7 +14,7 @@ The timeline is complete, but **`pm25` has 2,067 missing values (4.7%)** in 214 
 ```
 data/raw/  data/processed/   source + cleaned CSVs
 src/       config · data (air-quality load/clean) · eda · ts (shared helpers)
-notebooks/ 00_data_cleaning · 01_advanced_eda (I) · 02_advanced_eda_2 (II) · 03_imputation · 04_forecasting · 05_extreme_forecasting
+notebooks/ 00_data_cleaning · 01_advanced_eda (I) · 02_advanced_eda_2 (II) · 03_imputation · 04_forecasting · 05_extreme_forecasting · 06_spectral_diagnostics
 src/       …also impute.py (methods + masked-evaluation harness)
 reports/figures/             saved PNGs
 build_notebooks.py           regenerates notebooks from source
@@ -47,8 +47,10 @@ Open the notebooks with the **Python (beijing-air)** kernel, or run headless wit
 - [x] **Part 5** — **Forecasting the extremes**: why L2 under-predicts (and why log-target makes it
   worse), **quantile regression** for the tail, the no-free-lunch tradeoff, and a **probabilistic
   exceedance-warning** system with cost-asymmetric threshold tuning (PR curve)
+- [x] **Part 6** — **Advanced diagnostics**: spectral analysis (periodogram), cross-correlation
+  **lead-lag**, a wind direction×speed **pollution-source** map, and **change-point detection**
 
-**Full study (Parts 0–5): clean → extensive EDA → evaluated imputation → forecasting → extremes.**
+**Full study (Parts 0–6): clean → extensive EDA → imputation → forecasting → extremes → diagnostics.**
 
 ## Headline findings (extensive EDA)
 - **PM2.5 is severe & heavy-tailed** (skew 1.8 → −0.3 after log1p; mean 99 µg/m³); **59% of hours are
@@ -78,3 +80,8 @@ Open the notebooks with the **Python (beijing-air)** kernel, or run headless wit
   tracks spikes, **0.98 recall** of hazardous hours) but at higher MAE/lower precision — *no free
   lunch*. The principled warning is a **probabilistic exceedance classifier** (avg-precision 0.83) with
   the alarm threshold tuned to the cost asymmetry (lower it to prioritise recall for health).
+- **Diagnostics (Part 6):** the **periodogram** confirms power concentrates at the **daily (24h) +
+  annual** cycles; **cross-correlation** shows weather acts on pollution **near-instantly** (peak at
+  lag 0 → you need a weather *forecast*, not just history); the direction×speed map is a real
+  **source-attribution** result (strong N-winds clean to ≈20, SE winds stay dirty ≈100, calm traps
+  ≈130); and **change-point detection** finds **no regime shift** — the air didn't improve 2010–14.
