@@ -10,7 +10,7 @@ findings) so a new practice never collides with an old one.
 |---|---|---|
 | [`sp500-shiller/`](sp500-shiller/) | S&P 500 (Shiller, 1871→), Telco Churn, Mauna Loa CO₂, 12-stock panel | Full course: Advanced EDA → TS foundations → forecasting → multivariate → ML/DL → evaluation, plus GARCH/DCC volatility stretches (Parts 0–10) |
 | [`bike-sharing/`](bike-sharing/) | UCI Bike-Sharing hourly demand (2011–12) | Complete study (Parts 0–6): Advanced EDA → multi-seasonal TS → covariate forecasting → walk-forward backtesting & probabilistic intervals → SHAP interpretability → weather-forecast uncertainty propagation |
-| [`beijing-air-quality/`](beijing-air-quality/) | UCI Beijing PM2.5 hourly (2010–14) | **Extensive** air-quality EDA (quality audit, distributions, missingness mechanism, temporal/meteorology/extremes/PCA) with real structured missing data; imputation + forecasting next (Parts 0–2; more in progress) |
+| [`beijing-air-quality/`](beijing-air-quality/) | UCI Beijing PM2.5 hourly (2010–14) | **Extensive** air-quality EDA (quality, distributions, missingness, temporal/meteorology/extremes/PCA) + **evaluated missing-data imputation** (mask-and-score, hybrid); multi-seasonal TS & forecasting next (Parts 0–3; more in progress) |
 
 _New practice → new sibling folder._
 

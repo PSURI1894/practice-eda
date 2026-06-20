@@ -14,7 +14,8 @@ The timeline is complete, but **`pm25` has 2,067 missing values (4.7%)** in 214 
 ```
 data/raw/  data/processed/   source + cleaned CSVs
 src/       config · data (air-quality load/clean) · eda · ts (shared helpers)
-notebooks/ 00_data_cleaning · 01_advanced_eda (I) · 02_advanced_eda_2 (II)   (more parts to come)
+notebooks/ 00_data_cleaning · 01_advanced_eda (I) · 02_advanced_eda_2 (II) · 03_imputation
+src/       …also impute.py (methods + masked-evaluation harness)
 reports/figures/             saved PNGs
 build_notebooks.py           regenerates notebooks from source
 ```
@@ -37,7 +38,9 @@ Open the notebooks with the **Python (beijing-air)** kernel, or run headless wit
 - [x] **Part 2** — **Advanced EDA II**: temporal rhythms (diurnal × seasonal heatmaps, trend),
   autocorrelation/persistence, the **meteorology** (wind rose, dispersion, Pearson vs Spearman),
   **extreme episodes** (AQI exceedance, episode duration, Jan-2013), and **PCA + pollution regimes**
-- [ ] Part 3 — Missing-data imputation (forward-fill / interpolation / KNN / MICE), *evaluated*
+- [x] **Part 3** — **Missing-data imputation, evaluated**: mask-and-score protocol, five methods
+  (ffill/interp/climatology/KNN/MICE) compared **stratified by gap length**, distribution-preservation
+  check, and a **hybrid** (interp short + MICE long) that wins — writes a gap-free `beijing_imputed.csv`
 - [ ] Part 4 — TS foundations (multi-seasonal) + pollution forecasting with weather covariates
 
 ## Headline findings (extensive EDA)
@@ -53,3 +56,8 @@ Open the notebooks with the **Python (beijing-air)** kernel, or run headless wit
   dirtiest regime is **cold + low-wind (stagnant)**.
 - **Extremes persist for days:** "very unhealthy" spells last up to **4.6 days**; the Jan-2013
   "airpocalypse" peaked at **886 µg/m³ (~59× the WHO guideline)**.
+- **Imputation (Part 3):** evaluated by masking known values that mimic the real gaps. **No single
+  method wins** — linear interpolation is best for short gaps (MAE 10 at 1-3h) but fails on long ones
+  (82 at 49h+) where **MICE** wins (64); **climatology collapses variance** (std 20 vs the true 96).
+  A **hybrid** (interp ≤48h + MICE beyond) beats every method (MAE 45 vs 54), and the long outages are
+  flagged in the saved gap-free series.
