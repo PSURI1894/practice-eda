@@ -14,3 +14,4 @@ holidays>=0.50          # US federal holiday calendar (demand drops on holidays)
 jupyter
 ipykernel
 nbconvert
+ruptures>=1.1            # PELT change-point detection (Part 6)
